@@ -1,0 +1,50 @@
+Sub TransformData()
+    Dim inputSheet As Worksheet
+    Dim outputSheet As Worksheet
+    Dim lastRowInput As Long
+    Dim lastRowOutput As Long
+    Dim i As Long
+    Dim subClassValues() As String
+    Dim primaryClass As String
+    
+    ' Set the input and output sheets
+    Set inputSheet = ThisWorkbook.Sheets("Sheet1") ' Replace "Sheet1" with the actual name of your input sheet
+    Set outputSheet = ThisWorkbook.Sheets.Add
+    outputSheet.Name = "Output"
+    
+    ' Initialize the output sheet with headers
+    outputSheet.Cells(1, 1).Value = "Index"
+    outputSheet.Cells(1, 2).Value = "Primary Class"
+    outputSheet.Cells(1, 3).Value = "Attribute"
+    outputSheet.Cells(1, 4).Value = "Data Type"
+    
+    ' Find the last row in the input sheet
+    lastRowInput = inputSheet.Cells(inputSheet.Rows.Count, "A").End(xlUp).Row
+    
+    ' Initialize the row counter for the output sheet
+    lastRowOutput = 1
+    
+    ' Loop through each row in the input sheet
+    For i = 2 To lastRowInput ' Start from the second row assuming headers are in the first row
+        ' Check if "Sub Class" is blank
+        If IsEmpty(inputSheet.Cells(i, 3).Value) Or inputSheet.Cells(i, 3).Value = "" Then
+            primaryClass = inputSheet.Cells(i, 2).Value
+            outputSheet.Cells(lastRowOutput + 1, 1).Value = inputSheet.Cells(i, 1).Value
+            outputSheet.Cells(lastRowOutput + 1, 2).Value = primaryClass
+            outputSheet.Cells(lastRowOutput + 1, 3).Value = inputSheet.Cells(i, 4).Value
+            outputSheet.Cells(lastRowOutput + 1, 4).Value = inputSheet.Cells(i, 5).Value
+            lastRowOutput = lastRowOutput + 1
+        Else
+            ' Split comma-separated values in "Sub Class"
+            subClassValues = Split(Trim(inputSheet.Cells(i, 3).Value), ",")
+            For Each subClassValue In subClassValues
+                primaryClass = Trim(subClassValue)
+                outputSheet.Cells(lastRowOutput + 1, 1).Value = inputSheet.Cells(i, 1).Value
+                outputSheet.Cells(lastRowOutput + 1, 2).Value = primaryClass
+                outputSheet.Cells(lastRowOutput + 1, 3).Value = inputSheet.Cells(i, 4).Value
+                outputSheet.Cells(lastRowOutput + 1, 4).Value = inputSheet.Cells(i, 5).Value
+                lastRowOutput = lastRowOutput + 1
+            Next subClassValue
+        End If
+    Next i
+End Sub
